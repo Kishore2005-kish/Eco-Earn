@@ -94,14 +94,8 @@ export default function SubmitPage() {
         if (insertError) throw insertError;
 
         if (status === 'approved') {
-          // Update profile points
-          await supabase.from('profiles').update({
-            points: (profileData?.streak !== undefined ? 0 : 0) + pts, // will use RPC later
-            total_kg_recycled: quantity,
-          }).eq('id', user.id);
-
-          // Simple points increment via RPC-like approach
-          await supabase.rpc('increment_points' as any, { user_id: user.id, pts, kg: quantity });
+          // Atomically increment points, streak, level via DB function
+          await supabase.rpc('increment_points', { p_user_id: user.id, p_pts: pts, p_kg: quantity } as any);
           setPointsEarned(pts);
         }
         setSubmitted(true);
