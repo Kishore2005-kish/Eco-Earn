@@ -14,7 +14,140 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      bins: {
+        Row: {
+          bin_id: string
+          created_at: string
+          id: string
+          location_lat: number | null
+          location_lng: number | null
+          name: string
+          qr_code_data: string
+        }
+        Insert: {
+          bin_id: string
+          created_at?: string
+          id?: string
+          location_lat?: number | null
+          location_lng?: number | null
+          name: string
+          qr_code_data: string
+        }
+        Update: {
+          bin_id?: string
+          created_at?: string
+          id?: string
+          location_lat?: number | null
+          location_lng?: number | null
+          name?: string
+          qr_code_data?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          id: string
+          last_recycled_at: string | null
+          level: number
+          name: string
+          points: number
+          streak: number
+          total_kg_recycled: number
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          id: string
+          last_recycled_at?: string | null
+          level?: number
+          name?: string
+          points?: number
+          streak?: number
+          total_kg_recycled?: number
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          id?: string
+          last_recycled_at?: string | null
+          level?: number
+          name?: string
+          points?: number
+          streak?: number
+          total_kg_recycled?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      submissions: {
+        Row: {
+          bin_id: string | null
+          confidence: number
+          created_at: string
+          id: string
+          image_url: string
+          points_awarded: number
+          quantity: number
+          status: Database["public"]["Enums"]["submission_status"]
+          user_id: string
+          waste_type: Database["public"]["Enums"]["waste_type"]
+        }
+        Insert: {
+          bin_id?: string | null
+          confidence?: number
+          created_at?: string
+          id?: string
+          image_url: string
+          points_awarded?: number
+          quantity?: number
+          status?: Database["public"]["Enums"]["submission_status"]
+          user_id: string
+          waste_type?: Database["public"]["Enums"]["waste_type"]
+        }
+        Update: {
+          bin_id?: string | null
+          confidence?: number
+          created_at?: string
+          id?: string
+          image_url?: string
+          points_awarded?: number
+          quantity?: number
+          status?: Database["public"]["Enums"]["submission_status"]
+          user_id?: string
+          waste_type?: Database["public"]["Enums"]["waste_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "submissions_bin_id_fkey"
+            columns: ["bin_id"]
+            isOneToOne: false
+            referencedRelation: "bins"
+            referencedColumns: ["bin_id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +156,16 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
+      submission_status: "approved" | "review" | "rejected"
+      waste_type:
+        | "plastic"
+        | "metal"
+        | "paper"
+        | "organic"
+        | "glass"
+        | "ewaste"
+        | "unknown"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +292,18 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user"],
+      submission_status: ["approved", "review", "rejected"],
+      waste_type: [
+        "plastic",
+        "metal",
+        "paper",
+        "organic",
+        "glass",
+        "ewaste",
+        "unknown",
+      ],
+    },
   },
 } as const
