@@ -95,7 +95,7 @@ export default function SubmitPage() {
 
         if (status === 'approved') {
           // Atomically increment points, streak, level via DB function
-          await supabase.rpc('increment_points', { p_user_id: user.id, p_pts: pts, p_kg: quantity } as any);
+          await supabase.rpc('increment_points', { p_user_id: user.id, p_pts: pts, p_kg: quantity });
           setPointsEarned(pts);
         }
         setSubmitted(true);
