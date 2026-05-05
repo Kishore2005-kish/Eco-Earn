@@ -10,8 +10,8 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
-import ScanPage from "./pages/ScanPage";
-import SubmitPage from "./pages/SubmitPage";
+import MyQRCode from "./pages/MyQRCode";
+import AdminSubmit from "./pages/AdminSubmit";
 import Leaderboard from "./pages/Leaderboard";
 import HistoryPage from "./pages/HistoryPage";
 import NotFound from "./pages/NotFound";
@@ -31,8 +31,8 @@ const App = () => (
             <Route path="/signup" element={<Signup />} />
             <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
               <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/scan" element={<ScanPage />} />
-              <Route path="/submit" element={<SubmitPage />} />
+              <Route path="/my-qr" element={<MyQRCode />} />
+              <Route path="/admin/submit" element={<AdminSubmit />} />
               <Route path="/leaderboard" element={<Leaderboard />} />
               <Route path="/history" element={<HistoryPage />} />
             </Route>

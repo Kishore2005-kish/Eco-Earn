@@ -153,6 +153,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      has_role: { Args: { _role: string; _user_id: string }; Returns: boolean }
       increment_points: {
         Args: { p_kg: number; p_pts: number; p_user_id: string }
         Returns: undefined
