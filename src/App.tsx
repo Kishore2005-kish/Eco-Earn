@@ -34,6 +34,7 @@ const App = () => (
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/my-qr" element={<MyQRCode />} />
               <Route path="/admin/submit" element={<AdminSubmit />} />
+              <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/leaderboard" element={<Leaderboard />} />
               <Route path="/history" element={<HistoryPage />} />
             </Route>
