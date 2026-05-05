@@ -10,7 +10,7 @@ export default function AppLayout() {
 
   const navItems = isAdmin
     ? [
-        { path: '/dashboard', label: 'Home', icon: Home },
+        { path: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
         { path: '/admin/submit', label: 'Scan', icon: ScanLine },
         { path: '/leaderboard', label: 'Rank', icon: Trophy },
         { path: '/history', label: 'Profile', icon: User },
