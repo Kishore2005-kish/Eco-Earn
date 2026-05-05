@@ -12,6 +12,7 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import MyQRCode from "./pages/MyQRCode";
 import AdminSubmit from "./pages/AdminSubmit";
+import AdminDashboard from "./pages/AdminDashboard";
 import Leaderboard from "./pages/Leaderboard";
 import HistoryPage from "./pages/HistoryPage";
 import NotFound from "./pages/NotFound";
@@ -33,6 +34,7 @@ const App = () => (
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/my-qr" element={<MyQRCode />} />
               <Route path="/admin/submit" element={<AdminSubmit />} />
+              <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/leaderboard" element={<Leaderboard />} />
               <Route path="/history" element={<HistoryPage />} />
             </Route>

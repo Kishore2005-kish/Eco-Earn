@@ -1,5 +1,5 @@
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { Home, QrCode, ScanLine, Trophy, User } from 'lucide-react';
+import { Home, QrCode, ScanLine, Trophy, User, LayoutDashboard } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useUserRole } from '@/hooks/useUserRole';
 
@@ -10,7 +10,7 @@ export default function AppLayout() {
 
   const navItems = isAdmin
     ? [
-        { path: '/dashboard', label: 'Home', icon: Home },
+        { path: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
         { path: '/admin/submit', label: 'Scan', icon: ScanLine },
         { path: '/leaderboard', label: 'Rank', icon: Trophy },
         { path: '/history', label: 'Profile', icon: User },
