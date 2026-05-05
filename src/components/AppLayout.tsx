@@ -1,18 +1,26 @@
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { Home, ScanLine, PlusCircle, Trophy, User } from 'lucide-react';
+import { Home, QrCode, ScanLine, Trophy, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
-const navItems = [
-  { path: '/dashboard', label: 'Home', icon: Home },
-  { path: '/scan', label: 'Scan', icon: ScanLine },
-  { path: '/submit', label: 'Submit', icon: PlusCircle },
-  { path: '/leaderboard', label: 'Rank', icon: Trophy },
-  { path: '/history', label: 'Profile', icon: User },
-];
+import { useUserRole } from '@/hooks/useUserRole';
 
 export default function AppLayout() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { isAdmin } = useUserRole();
+
+  const navItems = isAdmin
+    ? [
+        { path: '/dashboard', label: 'Home', icon: Home },
+        { path: '/admin/submit', label: 'Scan', icon: ScanLine },
+        { path: '/leaderboard', label: 'Rank', icon: Trophy },
+        { path: '/history', label: 'Profile', icon: User },
+      ]
+    : [
+        { path: '/dashboard', label: 'Home', icon: Home },
+        { path: '/my-qr', label: 'My QR', icon: QrCode },
+        { path: '/leaderboard', label: 'Rank', icon: Trophy },
+        { path: '/history', label: 'Profile', icon: User },
+      ];
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
