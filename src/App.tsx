@@ -12,6 +12,7 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import MyQRCode from "./pages/MyQRCode";
 import AdminSubmit from "./pages/AdminSubmit";
+import AdminDashboard from "./pages/AdminDashboard";
 import Leaderboard from "./pages/Leaderboard";
 import HistoryPage from "./pages/HistoryPage";
 import NotFound from "./pages/NotFound";
