@@ -1,5 +1,5 @@
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { Home, QrCode, ScanLine, Trophy, User } from 'lucide-react';
+import { Home, QrCode, ScanLine, Trophy, User, LayoutDashboard } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useUserRole } from '@/hooks/useUserRole';
 
