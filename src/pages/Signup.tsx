@@ -33,8 +33,8 @@ export default function Signup() {
     if (error) {
       toast({ title: 'Signup failed', description: error.message, variant: 'destructive' });
     } else {
-      toast({ title: 'Check your email', description: 'We sent a verification link.' });
-      navigate('/login');
+      toast({ title: 'Account created!', description: 'You can now sign in.' });
+      navigate('/dashboard');
     }
   };
 
