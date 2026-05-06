@@ -1,0 +1,7 @@
+
+ALTER TABLE public.profiles
+  ADD COLUMN IF NOT EXISTS government_id text DEFAULT '',
+  ADD COLUMN IF NOT EXISTS bio text DEFAULT '',
+  ADD COLUMN IF NOT EXISTS city text DEFAULT '',
+  ADD COLUMN IF NOT EXISTS state text DEFAULT '',
+  ADD COLUMN IF NOT EXISTS country text DEFAULT '';

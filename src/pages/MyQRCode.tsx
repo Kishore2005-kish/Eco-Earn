@@ -63,6 +63,23 @@ export default function MyQRCode() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Fallback unique ID */}
+      <Card>
+        <CardContent className="p-4">
+          <p className="font-medium text-sm mb-1">📋 Copy-Paste ID (if QR fails)</p>
+          <p className="text-[10px] text-muted-foreground mb-2">Share this ID with the admin manually</p>
+          <div className="flex items-center gap-2">
+            <code className="flex-1 bg-muted px-3 py-2 rounded-lg text-xs font-mono break-all select-all">{user.id}</code>
+            <button
+              onClick={() => { navigator.clipboard.writeText(user.id); }}
+              className="shrink-0 px-3 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-medium hover:opacity-90 transition"
+            >
+              Copy
+            </button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

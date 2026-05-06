@@ -1,5 +1,5 @@
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { Home, QrCode, ScanLine, Trophy, User, LayoutDashboard, ShoppingBag } from 'lucide-react';
+import { Home, QrCode, ScanLine, Trophy, User, LayoutDashboard, ShoppingBag, Globe, BarChart3 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useUserRole } from '@/hooks/useUserRole';
 
@@ -12,15 +12,17 @@ export default function AppLayout() {
     ? [
         { path: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
         { path: '/admin/submit', label: 'Scan', icon: ScanLine },
+        { path: '/insights', label: 'Insights', icon: Globe },
         { path: '/leaderboard', label: 'Rank', icon: Trophy },
-        { path: '/history', label: 'Profile', icon: User },
+        { path: '/profile', label: 'Profile', icon: User },
       ]
     : [
         { path: '/dashboard', label: 'Home', icon: Home },
         { path: '/my-qr', label: 'My QR', icon: QrCode },
         { path: '/marketplace', label: 'Shop', icon: ShoppingBag },
+        { path: '/insights', label: 'Insights', icon: Globe },
         { path: '/leaderboard', label: 'Rank', icon: Trophy },
-        { path: '/history', label: 'Profile', icon: User },
+        { path: '/profile', label: 'Profile', icon: User },
       ];
 
   return (
@@ -37,7 +39,7 @@ export default function AppLayout() {
                 key={item.path}
                 onClick={() => navigate(item.path)}
                 className={cn(
-                  'flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-all',
+                  'flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-xl transition-all',
                   active ? 'text-primary scale-105' : 'text-muted-foreground hover:text-foreground'
                 )}
               >
