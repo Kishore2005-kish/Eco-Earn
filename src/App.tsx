@@ -17,6 +17,8 @@ import AdminSubmit from "./pages/AdminSubmit";
 import AdminDashboard from "./pages/AdminDashboard";
 import Leaderboard from "./pages/Leaderboard";
 import HistoryPage from "./pages/HistoryPage";
+import ProfilePage from "./pages/ProfilePage";
+import GlobalCharts from "./pages/GlobalCharts";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -41,6 +43,8 @@ const App = () => (
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/leaderboard" element={<Leaderboard />} />
               <Route path="/history" element={<HistoryPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/insights" element={<GlobalCharts />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
