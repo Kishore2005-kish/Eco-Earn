@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { WASTE_CONFIG, getLevel, getNextLevelPoints, getLevelName } from '@/lib/constants';
-import { Flame, Leaf, Trophy, TrendingUp, Droplets, TreePine } from 'lucide-react';
+import { Flame, Leaf, Trophy, TrendingUp, Droplets, TreePine, Zap, Target, Calendar } from 'lucide-react';
+import { PieChart, Pie, Cell, ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import type { Tables } from '@/integrations/supabase/types';
+
+const COLORS = ['hsl(152, 60%, 36%)', 'hsl(200, 80%, 55%)', 'hsl(42, 90%, 55%)', 'hsl(12, 80%, 60%)', 'hsl(220, 40%, 50%)', 'hsl(142, 70%, 45%)', 'hsl(180, 40%, 50%)'];
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -18,7 +21,7 @@ export default function Dashboard() {
     const load = async () => {
       const [{ data: p }, { data: s }] = await Promise.all([
         supabase.from('profiles').select('*').eq('id', user.id).single(),
-        supabase.from('submissions').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(5),
+        supabase.from('submissions').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(50),
       ]);
       setProfile(p);
       setSubmissions(s || []);
@@ -36,7 +39,7 @@ export default function Dashboard() {
   const prevLevelPts = getNextLevelPoints(level - 1);
   const progress = nextLevelPts === Infinity ? 100 : ((profile.points - prevLevelPts) / (nextLevelPts - prevLevelPts)) * 100;
 
-  // Calculate impact
+  const approvedSubs = submissions.filter(s => s.status === 'approved');
   const totalCo2 = submissions.reduce((acc, s) => {
     const cfg = WASTE_CONFIG[s.waste_type] || WASTE_CONFIG.unknown;
     return acc + cfg.co2PerKg * Number(s.quantity);
@@ -46,8 +49,33 @@ export default function Dashboard() {
     return acc + cfg.treesPerKg * Number(s.quantity);
   }, 0);
 
+  // Waste type breakdown for pie chart
+  const wasteBreakdown = Object.entries(
+    submissions.reduce<Record<string, number>>((acc, s) => {
+      acc[s.waste_type] = (acc[s.waste_type] || 0) + Number(s.quantity);
+      return acc;
+    }, {})
+  ).map(([type, value]) => ({
+    name: WASTE_CONFIG[type]?.label || type,
+    value: Number(value.toFixed(1)),
+    color: WASTE_CONFIG[type]?.color || 'hsl(0,0%,50%)',
+  }));
+
+  // Weekly trend (last 7 days)
+  const weeklyData = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - (6 - i));
+    const dateStr = d.toISOString().split('T')[0];
+    const dayKg = submissions
+      .filter(s => s.created_at.startsWith(dateStr))
+      .reduce((a, s) => a + Number(s.quantity), 0);
+    return { day: d.toLocaleDateString('en', { weekday: 'short' }), kg: Number(dayKg.toFixed(1)) };
+  });
+
+  const avgPerSubmission = approvedSubs.length ? (Number(profile.total_kg_recycled) / approvedSubs.length).toFixed(1) : '0';
+
   return (
-    <div className="max-w-lg mx-auto px-4 py-6 space-y-6">
+    <div className="max-w-lg mx-auto px-4 py-6 space-y-5 pb-24">
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold">Hey, {profile.name || 'Eco Hero'} 👋</h1>
@@ -74,12 +102,47 @@ export default function Dashboard() {
       </Card>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 gap-3">
-        <StatCard icon={<Flame className="w-5 h-5 text-accent" />} label="Streak" value={`${profile.streak} days`} />
-        <StatCard icon={<TrendingUp className="w-5 h-5 text-primary" />} label="Recycled" value={`${Number(profile.total_kg_recycled).toFixed(1)} kg`} />
-        <StatCard icon={<Droplets className="w-5 h-5 text-primary" />} label="CO₂ Saved" value={`${totalCo2.toFixed(1)} kg`} />
-        <StatCard icon={<TreePine className="w-5 h-5 text-primary" />} label="Trees Saved" value={totalTrees.toFixed(2)} />
+      <div className="grid grid-cols-3 gap-2">
+        <StatCard icon={<Flame className="w-4 h-4 text-accent" />} label="Streak" value={`${profile.streak}d`} />
+        <StatCard icon={<TrendingUp className="w-4 h-4 text-primary" />} label="Recycled" value={`${Number(profile.total_kg_recycled).toFixed(1)}kg`} />
+        <StatCard icon={<Droplets className="w-4 h-4 text-primary" />} label="CO₂ Saved" value={`${totalCo2.toFixed(1)}kg`} />
+        <StatCard icon={<TreePine className="w-4 h-4 text-primary" />} label="Trees" value={totalTrees.toFixed(2)} />
+        <StatCard icon={<Target className="w-4 h-4 text-accent" />} label="Avg/Sub" value={`${avgPerSubmission}kg`} />
+        <StatCard icon={<Zap className="w-4 h-4 text-primary" />} label="Submissions" value={String(approvedSubs.length)} />
       </div>
+
+      {/* Weekly Activity Chart */}
+      <Card>
+        <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-1"><Calendar className="w-4 h-4" /> This Week</CardTitle></CardHeader>
+        <CardContent>
+          <ResponsiveContainer width="100%" height={140}>
+            <AreaChart data={weeklyData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+              <XAxis dataKey="day" tick={{ fontSize: 10 }} />
+              <YAxis tick={{ fontSize: 10 }} width={30} />
+              <Tooltip formatter={(v: number) => `${v} kg`} />
+              <Area type="monotone" dataKey="kg" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.15} strokeWidth={2} />
+            </AreaChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+
+      {/* Waste Breakdown Pie */}
+      {wasteBreakdown.length > 0 && (
+        <Card>
+          <CardHeader className="pb-2"><CardTitle className="text-sm">Your Recycling Mix</CardTitle></CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={180}>
+              <PieChart>
+                <Pie data={wasteBreakdown} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={40} outerRadius={70} paddingAngle={3} label={({ name, value }) => `${name} ${value}kg`} labelLine={{ strokeWidth: 1 }}>
+                  {wasteBreakdown.map((entry, i) => <Cell key={i} fill={entry.color} />)}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Recent Submissions */}
       <div>
@@ -88,7 +151,7 @@ export default function Dashboard() {
           <p className="text-muted-foreground text-sm">No submissions yet. Start recycling!</p>
         ) : (
           <div className="space-y-2">
-            {submissions.map(s => {
+            {submissions.slice(0, 5).map(s => {
               const cfg = WASTE_CONFIG[s.waste_type] || WASTE_CONFIG.unknown;
               return (
                 <Card key={s.id} className="p-3 flex items-center gap-3">
@@ -116,11 +179,11 @@ export default function Dashboard() {
 function StatCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
     <Card>
-      <CardContent className="p-4 flex items-center gap-3">
+      <CardContent className="p-3 flex items-center gap-2">
         {icon}
         <div>
-          <p className="text-xs text-muted-foreground">{label}</p>
-          <p className="font-bold text-sm">{value}</p>
+          <p className="text-[10px] text-muted-foreground">{label}</p>
+          <p className="font-bold text-xs">{value}</p>
         </div>
       </CardContent>
     </Card>
