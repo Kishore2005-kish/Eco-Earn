@@ -1,5 +1,5 @@
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { Home, QrCode, ScanLine, Trophy, User, LayoutDashboard } from 'lucide-react';
+import { Home, QrCode, ScanLine, Trophy, User, LayoutDashboard, ShoppingBag } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useUserRole } from '@/hooks/useUserRole';
 
@@ -18,6 +18,7 @@ export default function AppLayout() {
     : [
         { path: '/dashboard', label: 'Home', icon: Home },
         { path: '/my-qr', label: 'My QR', icon: QrCode },
+        { path: '/marketplace', label: 'Shop', icon: ShoppingBag },
         { path: '/leaderboard', label: 'Rank', icon: Trophy },
         { path: '/history', label: 'Profile', icon: User },
       ];
