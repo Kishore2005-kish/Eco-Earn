@@ -9,8 +9,10 @@ import AppLayout from "@/components/AppLayout";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import AdminLogin from "./pages/AdminLogin";
 import Dashboard from "./pages/Dashboard";
 import MyQRCode from "./pages/MyQRCode";
+import Marketplace from "./pages/Marketplace";
 import AdminSubmit from "./pages/AdminSubmit";
 import AdminDashboard from "./pages/AdminDashboard";
 import Leaderboard from "./pages/Leaderboard";
@@ -30,9 +32,11 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
             <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/my-qr" element={<MyQRCode />} />
+              <Route path="/marketplace" element={<Marketplace />} />
               <Route path="/admin/submit" element={<AdminSubmit />} />
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/leaderboard" element={<Leaderboard />} />
