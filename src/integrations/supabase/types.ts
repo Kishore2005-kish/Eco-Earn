@@ -47,36 +47,51 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          bio: string | null
+          city: string | null
+          country: string | null
           created_at: string
+          government_id: string | null
           id: string
           last_recycled_at: string | null
           level: number
           name: string
           points: number
+          state: string | null
           streak: number
           total_kg_recycled: number
           updated_at: string
         }
         Insert: {
           avatar_url?: string | null
+          bio?: string | null
+          city?: string | null
+          country?: string | null
           created_at?: string
+          government_id?: string | null
           id: string
           last_recycled_at?: string | null
           level?: number
           name?: string
           points?: number
+          state?: string | null
           streak?: number
           total_kg_recycled?: number
           updated_at?: string
         }
         Update: {
           avatar_url?: string | null
+          bio?: string | null
+          city?: string | null
+          country?: string | null
           created_at?: string
+          government_id?: string | null
           id?: string
           last_recycled_at?: string | null
           level?: number
           name?: string
           points?: number
+          state?: string | null
           streak?: number
           total_kg_recycled?: number
           updated_at?: string
