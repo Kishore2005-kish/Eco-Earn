@@ -46,6 +46,7 @@ const App = () => (
               <Route path="/history" element={<HistoryPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/insights" element={<GlobalCharts />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
