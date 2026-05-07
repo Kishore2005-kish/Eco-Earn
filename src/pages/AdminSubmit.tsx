@@ -10,7 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { WASTE_CONFIG, calculatePoints } from '@/lib/constants';
 import {
   Upload, Image, Loader2, CheckCircle2, AlertTriangle, XCircle,
-  ScanLine, Camera, XCircle as XIcon, User,
+  ScanLine, Camera, XCircle as XIcon, User, Clipboard,
 } from 'lucide-react';
 
 type ClassifyResult = {
@@ -25,9 +25,34 @@ export default function AdminSubmit() {
   const fileRef = useRef<HTMLInputElement>(null);
   const scannerRef = useRef<Html5Qrcode | null>(null);
 
-  // Step 1: scan user QR
+  // Step 1: scan user QR or manual ID
   const [scanning, setScanning] = useState(false);
   const [scannedUser, setScannedUser] = useState<{ userId: string; name: string } | null>(null);
+  const [manualId, setManualId] = useState('');
+  const [lookingUp, setLookingUp] = useState(false);
+
+  const lookupUserById = async () => {
+    const id = manualId.trim();
+    if (!id) return;
+    setLookingUp(true);
+    try {
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('id, name')
+        .eq('id', id)
+        .single();
+      if (error || !profile) {
+        toast({ title: 'User not found', description: 'No user with that ID exists.', variant: 'destructive' });
+      } else {
+        setScannedUser({ userId: profile.id, name: profile.name || 'Unknown User' });
+        toast({ title: 'User identified!', description: profile.name || id });
+      }
+    } catch {
+      toast({ title: 'Lookup failed', description: 'Could not find user.', variant: 'destructive' });
+    } finally {
+      setLookingUp(false);
+    }
+  };
 
   // Step 2: waste submission
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -199,22 +224,50 @@ export default function AdminSubmit() {
     );
   }
 
-  // Step 1: Scan user QR
+  // Step 1: Scan user QR or enter ID manually
   if (!scannedUser) {
     return (
       <div className="max-w-lg mx-auto px-4 py-6 space-y-6">
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2">
-            <ScanLine className="w-6 h-6 text-primary" /> Admin — Scan User
+            <ScanLine className="w-6 h-6 text-primary" /> Admin — Identify User
           </h1>
-          <p className="text-muted-foreground text-sm">Scan the user's QR code to identify them before submitting waste</p>
+          <p className="text-muted-foreground text-sm">Scan the user's QR code or paste their unique ID</p>
         </div>
 
+        {/* Manual ID Entry */}
+        <Card>
+          <CardContent className="p-4 space-y-3">
+            <div className="flex items-center gap-2 text-sm font-medium">
+              <Clipboard className="w-4 h-4 text-primary" /> Paste User ID
+            </div>
+            <div className="flex gap-2">
+              <Input
+                placeholder="Paste user's unique ID here..."
+                value={manualId}
+                onChange={e => setManualId(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && lookupUserById()}
+                className="font-mono text-xs"
+              />
+              <Button onClick={lookupUserById} disabled={!manualId.trim() || lookingUp} className="shrink-0">
+                {lookingUp ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Look Up'}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="flex items-center gap-3">
+          <div className="flex-1 h-px bg-border" />
+          <span className="text-xs text-muted-foreground font-medium">OR</span>
+          <div className="flex-1 h-px bg-border" />
+        </div>
+
+        {/* QR Scanner */}
         <div id="admin-qr-reader" className="rounded-xl overflow-hidden bg-muted aspect-square max-w-[300px] mx-auto" />
 
         {!scanning ? (
-          <Button onClick={startScanner} className="w-full gap-2 rounded-xl" size="lg">
-            <Camera className="w-5 h-5" /> Start Scanning
+          <Button onClick={startScanner} className="w-full gap-2 rounded-xl" size="lg" variant="outline">
+            <Camera className="w-5 h-5" /> Scan QR Code
           </Button>
         ) : (
           <Button onClick={stopScanner} variant="outline" className="w-full gap-2 rounded-xl" size="lg">

@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/hooks/use-toast';
-import { ShoppingBag, Coins, Loader2, Gift, CheckCircle } from 'lucide-react';
+import { ShoppingBag, Coins, Loader2, Gift, ShoppingCart } from 'lucide-react';
 
 interface Reward {
   id: string;
@@ -19,11 +19,10 @@ interface Reward {
 
 export default function Marketplace() {
   const { user } = useAuth();
-  const { toast } = useToast();
+  const navigate = useNavigate();
   const [rewards, setRewards] = useState<Reward[]>([]);
   const [userPoints, setUserPoints] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [redeemingId, setRedeemingId] = useState<string | null>(null);
 
   const load = async () => {
     const [{ data: rw }, { data: profile }] = await Promise.all([
@@ -37,26 +36,10 @@ export default function Marketplace() {
 
   useEffect(() => { if (user) load(); }, [user]);
 
-  const handleRedeem = async (reward: Reward) => {
-    if (!user) return;
-    setRedeemingId(reward.id);
-    try {
-      const { data, error } = await supabase.rpc('redeem_reward', {
-        p_user_id: user.id,
-        p_reward_id: reward.id,
-      });
-      if (error) throw error;
-      if (data !== 'success') {
-        toast({ title: 'Cannot redeem', description: data as string, variant: 'destructive' });
-      } else {
-        toast({ title: '🎉 Redeemed!', description: `You got "${reward.name}"!` });
-        load();
-      }
-    } catch (err: any) {
-      toast({ title: 'Error', description: err.message, variant: 'destructive' });
-    } finally {
-      setRedeemingId(null);
-    }
+  const handleBuy = (reward: Reward) => {
+    navigate('/checkout', {
+      state: { reward, userPoints },
+    });
   };
 
   if (loading) {
@@ -103,17 +86,15 @@ export default function Marketplace() {
                 <Button
                   size="sm"
                   className="w-full gap-1 text-xs"
-                  disabled={!canAfford || outOfStock || redeemingId === reward.id}
-                  onClick={() => handleRedeem(reward)}
+                  disabled={!canAfford || outOfStock}
+                  onClick={() => handleBuy(reward)}
                 >
-                  {redeemingId === reward.id ? (
-                    <Loader2 className="w-3 h-3 animate-spin" />
-                  ) : outOfStock ? (
+                  {outOfStock ? (
                     'Out of Stock'
                   ) : !canAfford ? (
                     'Not Enough Points'
                   ) : (
-                    <><Gift className="w-3 h-3" /> Redeem</>
+                    <><ShoppingCart className="w-3 h-3" /> Buy Now</>
                   )}
                 </Button>
               </CardContent>
