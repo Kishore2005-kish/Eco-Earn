@@ -25,9 +25,34 @@ export default function AdminSubmit() {
   const fileRef = useRef<HTMLInputElement>(null);
   const scannerRef = useRef<Html5Qrcode | null>(null);
 
-  // Step 1: scan user QR
+  // Step 1: scan user QR or manual ID
   const [scanning, setScanning] = useState(false);
   const [scannedUser, setScannedUser] = useState<{ userId: string; name: string } | null>(null);
+  const [manualId, setManualId] = useState('');
+  const [lookingUp, setLookingUp] = useState(false);
+
+  const lookupUserById = async () => {
+    const id = manualId.trim();
+    if (!id) return;
+    setLookingUp(true);
+    try {
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('id, name')
+        .eq('id', id)
+        .single();
+      if (error || !profile) {
+        toast({ title: 'User not found', description: 'No user with that ID exists.', variant: 'destructive' });
+      } else {
+        setScannedUser({ userId: profile.id, name: profile.name || 'Unknown User' });
+        toast({ title: 'User identified!', description: profile.name || id });
+      }
+    } catch {
+      toast({ title: 'Lookup failed', description: 'Could not find user.', variant: 'destructive' });
+    } finally {
+      setLookingUp(false);
+    }
+  };
 
   // Step 2: waste submission
   const [imageFile, setImageFile] = useState<File | null>(null);
