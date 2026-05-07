@@ -19,6 +19,7 @@ import Leaderboard from "./pages/Leaderboard";
 import HistoryPage from "./pages/HistoryPage";
 import ProfilePage from "./pages/ProfilePage";
 import GlobalCharts from "./pages/GlobalCharts";
+import CheckoutPage from "./pages/CheckoutPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
