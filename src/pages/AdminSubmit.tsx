@@ -10,7 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { WASTE_CONFIG, calculatePoints } from '@/lib/constants';
 import {
   Upload, Image, Loader2, CheckCircle2, AlertTriangle, XCircle,
-  ScanLine, Camera, XCircle as XIcon, User,
+  ScanLine, Camera, XCircle as XIcon, User, Clipboard,
 } from 'lucide-react';
 
 type ClassifyResult = {
